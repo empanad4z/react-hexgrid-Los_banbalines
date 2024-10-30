@@ -1,10 +1,13 @@
 {
-  "name": "react-hexgrid-Los-banbalines",
+  "name": "react-hexgrid-los-banbalines",
   "description": "Interactive hexagon grids with React bindings",
   "version": "2.0.1",
   "main": "lib/index.js",
   "author": "Hellenic",
-  "repository": "Hellenic/react-hexgrid",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hellenic/react-hexgrid.git"
+  },
   "license": "MIT",
   "scripts": {
     "tsc": "tsc",
