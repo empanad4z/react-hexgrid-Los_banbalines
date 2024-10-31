@@ -1,52 +1,56 @@
-import React, { Component } from 'react';
-import { GridGenerator, HexGrid, Layout, Path, Hexagon, Text, Pattern, Hex } from 'react-hexgrid';
+import React, { useState, useEffect } from 'react';
+import { HexGrid, Layout, Hexagon, Text } from 'react-hexgrid';
 import './App.css';
 
-class App extends Component {
-  render() {
-    const hexagonSize = { x: 10, y: 10 };
-    const moreHexas = GridGenerator.parallelogram(-2, 2, -2, 2);
-    return (
-      <div className="App">
-        <h2>React Hexgrid v1</h2>
-        <p>Constructing Hexgrid with component-based approach with custom SVG elements.</p>
-        <HexGrid width={1200} height={800} viewBox="-50 -50 100 100">
-          {/* Main grid with bit hexagons, all manual */}
-          <Layout size={hexagonSize} flat={true} spacing={1.1} origin={{ x: 0, y: 0 }}>
-            <Hexagon q={0} r={0} s={0} />
-            {/* Using pattern (defined below) to fill the hexagon */}
-            <Hexagon q={0} r={-1} s={1} fill="pat-1" />
-            <Hexagon q={0} r={1} s={-1} />
-            <Hexagon q={1} r={-1} s={0}>
-              <Text>1, -1, 0</Text>
+function App() {
+  const [size, setSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  
+  // Calcula el tamaño del hexágono, asegurándote de que x e y sean iguales para que sea cuadrado
+  const hexagonDimension = Math.min(size.width / 100, size.height / 80); // Ajusta los valores según sea necesario
+  const hexagonSize = { x: hexagonDimension, y: hexagonDimension };
+
+  useEffect(() => {
+    // Ajusta el tamaño en el redimensionado de la ventana
+    const handleResize = () => setSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const zeroto5 = Array(6).fill(0).map((_, index) => index);
+
+  // Ajusta el viewBox de manera responsiva
+  const viewBoxWidth = size.width / 8;
+  const viewBoxHeight = size.height / 8;
+  const viewBox = `${size.width >= 480 ? "-10" : "-5"} -10 ${viewBoxWidth} ${viewBoxHeight}`;
+
+  return (
+    <div className="App">
+      <HexGrid className='board-grid' width={size.width} height={size.height} viewBox={viewBox}>
+        <Layout className="hexagon-group" size={hexagonSize} flat={false} spacing={1}>
+          {zeroto5.map((i) => (
+            <Hexagon key={`${i}-0`} q={i} r={0} s={0}>
             </Hexagon>
-            <Hexagon q={1} r={0} s={-1}>
-              <Text>1, 0, -1</Text>
+          ))}
+          {zeroto5.map((i) => (
+            <Hexagon key={`${i}-1`} q={i} r={1} s={0}>
             </Hexagon>
-            {/* Pattern and text */}
-            <Hexagon q={-1} r={1} s={0} fill="pat-2">
-              <Text>-1, 1, 0</Text>
+          ))}
+          {zeroto5.filter((i) => i < 5).map((i) => (
+            <Hexagon key={`${i}-2`} q={i} r={2} s={0}>
             </Hexagon>
-            <Hexagon q={-1} r={0} s={1} />
-            <Hexagon q={-2} r={0} s={1} />
-            <Path start={new Hex(0, 0, 0)} end={new Hex(-2, 0, 1)} />
-          </Layout>
-          {/* Additional small grid, hexagons generated with generator */}
-          <Layout size={{ x: 2, y: 2 }} origin={{ x: 50, y: -30 }}>
-            { moreHexas.map((hex, i) => <Hexagon key={i} q={hex.q} r={hex.r} s={hex.s} />) }
-          </Layout>
-          {/* You can define multiple patterns and switch between them with "fill" prop on Hexagon */}
-          <Pattern id="pat-1" link="http://lorempixel.com/400/400/cats/1/" size={hexagonSize} />
-          <Pattern id="pat-2" link="http://lorempixel.com/400/400/cats/2/" size={hexagonSize} />
-          <g>
-            <circle cx="50" cy="0" r="10" />
-            <circle cx="50" cy="10" r="8" />
-            <circle cx="45" cy="20" r="6" />
-          </g>
-        </HexGrid>
-      </div>
-    );
-  }
+          ))}
+          {zeroto5.filter((i) => i < 4).map((i) => (
+            <Hexagon key={`${i}-3`} q={i} r={3} s={0}>
+            </Hexagon>
+          ))}
+          {zeroto5.filter((i) => i < 3).map((i) => (
+            <Hexagon key={`${i}-4`} q={i} r={4} s={0}>
+            </Hexagon>
+          ))}
+        </Layout>
+      </HexGrid>
+    </div>
+  );
 }
 
 export default App;
